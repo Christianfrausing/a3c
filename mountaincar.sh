@@ -15,6 +15,6 @@ python3 ./main.py \
     --ent 1e-2 \
     --dr 0.99 \
     --td 0 \
-    --lr 1e-3 \
+    --lr 5e-4 \
     --save-model 1 \
     --save-plot 1

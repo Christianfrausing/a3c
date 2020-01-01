@@ -1,7 +1,7 @@
 import torch, os, argparse
-from .controller import Controller
-from .worker import Worker
-from .model import TemporalDifferenceAdvantageActorCritic
+from bin.controller import Controller
+from bin.worker import Worker
+from bin.model import TemporalDifferenceAdvantageActorCritic
 
 """
 Chr
@@ -82,6 +82,7 @@ if __name__ == '__main__':
             'rollout_limit':args.rl,
             'rollout_batchsize':args.rb,
             'discount_rate':args.dr,
+            'temporal_difference_scale':args.td,
             'model':TemporalDifferenceAdvantageActorCritic,
             'model_kwargs':{
                 'gpu':args.gpu,

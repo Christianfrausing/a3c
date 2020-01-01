@@ -1,4 +1,4 @@
-from .utils import Process, Channel, Status, sha1
+from ..utils import Process, Channel, Status, sha1
 import os
 import matplotlib.pyplot as plt
 

@@ -1,4 +1,4 @@
-from .utils import Process, Channel, gym_space_size, sha1, rollout
+from ..utils import Process, Channel, gym_space_size, sha1, rollout
 import gym
 
 class Worker(Process):

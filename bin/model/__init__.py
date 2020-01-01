@@ -1,4 +1,4 @@
-from .utils import sha1, returns
+from ..utils import sha1, returns
 import torch
 
 class Model(torch.nn.Module):
