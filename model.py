@@ -1,4 +1,5 @@
-import utils, torch
+from .utils import sha1, returns
+import torch
 
 class Model(torch.nn.Module):
     def __init__(self, gpu=False):
@@ -65,7 +66,7 @@ class ActorCritic(Model):
         )
         self.to(self.device)
     def __hash__(self):
-        return utils.sha1([
+        return sha1([
             self.__class__.__name__,
             self.process[0].in_features,
             self.actor[0].out_features,
@@ -87,7 +88,7 @@ class ActorCritic(Model):
         return (- torch.log(action_probabilities).mul(delta) + entropy_loss).sum()
     def loss(self, states, next_states, actions, rewards, t, entropy, discount_rate, temporal_difference_scale):
         rewards = rewards.to(self.device)
-        actual_returns = utils.returns(
+        actual_returns = returns(
             rewards=rewards,
             discount_rate=discount_rate,
         ).to(self.device)
@@ -113,7 +114,7 @@ class AdvantageActorCritic(ActorCritic):
         return delta.pow(2).sum()
     def loss(self, states, next_states, actions, rewards, t, entropy, discount_rate, temporal_difference_scale):
         rewards = rewards.to(self.device)
-        actual_returns = utils.returns(
+        actual_returns = returns(
             rewards=rewards,
             discount_rate=discount_rate,
         ).to(self.device)
@@ -139,7 +140,7 @@ class TemporalDifferenceAdvantageActorCritic(AdvantageActorCritic):
         )
     def loss(self, states, next_states, actions, rewards, t, entropy, discount_rate, temporal_difference_scale):
         rewards = rewards.to(self.device)
-        actual_returns = utils.returns(rewards=rewards, discount_rate=discount_rate).to(self.device)
+        actual_returns = returns(rewards=rewards, discount_rate=discount_rate).to(self.device)
         action_probabilities, expected_returns = self.forward(states.to(self.device))
         action_probabilities = action_probabilities.gather(1, actions.to(self.device)).view(-1)
         next_expected_returns = self.state_value(next_states.to(self.device))

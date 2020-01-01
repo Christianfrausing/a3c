@@ -1,7 +1,7 @@
 import torch, os, argparse
-from controller import Controller
-from worker import Worker
-from model import TemporalDifferenceAdvantageActorCritic
+from .controller import Controller
+from .worker import Worker
+from .model import TemporalDifferenceAdvantageActorCritic
 
 """
 Chr

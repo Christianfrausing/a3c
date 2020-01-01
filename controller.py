@@ -1,4 +1,5 @@
-import utils, os
+from .utils import Process, Channel, Status, sha1
+import os
 import matplotlib.pyplot as plt
 
 class PlotController:
@@ -32,7 +33,7 @@ class PlotController:
         if show:
             plt.show()
 
-class Controller(utils.Process):
+class Controller(Process):
     def __init__(self, worker, worker_amount=1, worker_kwargs={}, seed=0, root=None, validate=False):
         # Checks
         assert worker_amount > 0
@@ -43,7 +44,7 @@ class Controller(utils.Process):
         self.worker_kwargs = worker_kwargs
         self.validate = validate
         self.seed = seed
-        self.channel = utils.Channel()
+        self.channel = Channel()
         super(Controller, self).__init__(root=root, name=self.__hash__)
 
         # Workers
@@ -63,7 +64,7 @@ class Controller(utils.Process):
         ]
 
         # Params
-        self.status = utils.Status(
+        self.status = Status(
             header=['Elapsed','Progress [%]', 'Training'] + (['Validation'] if validate else []),
             header_space=5,
             divisor=' | ',
@@ -88,7 +89,7 @@ class Controller(utils.Process):
             'optimizer_parameters':self.workers[0].model.optimizer_parameters,
         }
     def __hash__(self):
-        return utils.sha1({
+        return sha1({
             'seed': self.seed,
             'worker': self.worker.__class__.__name__,
             'worker_amount':self.worker_amount,

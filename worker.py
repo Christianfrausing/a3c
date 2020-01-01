@@ -1,20 +1,21 @@
-import utils, gym
+from .utils import Process, Channel, gym_space_size, sha1, rollout
+import gym
 
-class Worker(utils.Process):
+class Worker(Process):
     def __init__(self, environment, model, model_kwargs={}, episode_limit=1, rollout_limit=1, rollout_batchsize=-1, discount_rate=1, entropy=1, temporal_difference_scale=0, seed=0, root=None, train=True):
         self.environment = gym.make(environment).env
         self.environment.seed(seed)
 
         # Model
-        model_kwargs['observation_space'] = utils.gym_space_size(self.environment.observation_space)
-        model_kwargs['action_space'] = utils.gym_space_size(self.environment.action_space)
+        model_kwargs['observation_space'] = gym_space_size(self.environment.observation_space)
+        model_kwargs['action_space'] = gym_space_size(self.environment.action_space)
         if not hasattr(model, 'device'):
             self.model = model(**model_kwargs)
         else:
             self.model = model
 
         # Params
-        self.channel = utils.Channel()
+        self.channel = Channel()
         self.seed = seed
         self.train = train
         self.episode_limit = episode_limit
@@ -27,7 +28,7 @@ class Worker(utils.Process):
     def name(self):
         return (self.__class__.__name__ if self.train else 'Validator') + str(self.__hash__())
     def __hash__(self):
-        return utils.sha1([
+        return sha1([
             self.environment.__class__.__name__,
             self.model.__hash__(),
             self.seed,
@@ -55,7 +56,7 @@ class Worker(utils.Process):
         self.path.freeze()
         while True:
             # Compute rewards
-            rewards_sum = utils.rollout(
+            rewards_sum = rollout(
                 environment=self.environment,
                 policy=self.model.policy,
                 limit=self.rollout_limit,
@@ -74,7 +75,7 @@ class Worker(utils.Process):
         for episode in range(1, self.episode_limit + 1):
             
             # Rollout
-            states, next_states, actions, rewards, _ = utils.rollout(environment=self.environment, policy=self.model.policy, limit=self.rollout_limit)
+            states, next_states, actions, rewards, _ = rollout(environment=self.environment, policy=self.model.policy, limit=self.rollout_limit)
             rewards_sum = 0
             for batch in zip(
                 states.split(self.rollout_batchsize),
