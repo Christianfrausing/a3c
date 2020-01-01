@@ -1,1 +1,0 @@
-{"seed": 1, "episode_limit": 2000, "rollout_limit": 3500, "discount_rate": 0.99, "entropy": 0.001, "worker": "Worker", "environment": "MountainCarEnv", "observation_space": 2, "action_space": 3, "device": "cpu", "model": "TemporalDifferenceAdvantageActorCritic", "optimizer": "Adam", "optimizer_parameters": {"lr": 0.001}, "runtime": 2511.109004}
