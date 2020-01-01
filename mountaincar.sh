@@ -12,7 +12,7 @@ python3 ./main.py \
     --el 1000 \
     --rl 3500 \
     --rb -1 \
-    --ent 1e-2 \
+    --ent 1 \
     --dr 0.99 \
     --td 0 \
     --lr 5e-4 \

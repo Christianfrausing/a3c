@@ -2,6 +2,7 @@ import torch, os, argparse
 from bin.controller import Controller
 from bin.worker import Worker
 from bin.model import TemporalDifferenceAdvantageActorCritic
+from bin.utils import seed
 
 """
 Chr
@@ -71,7 +72,7 @@ parser.add_argument(
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    torch.manual_seed(args.seed)
+    seed(seed=args.seed)
     controller = Controller(
         worker=Worker,
         worker_amount=args.w,

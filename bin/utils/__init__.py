@@ -1,4 +1,4 @@
-import gym, torch, hashlib, os, datetime, json, multiprocessing
+import gym, torch, hashlib, os, datetime, json, multiprocessing, numpy, random
 from pandas import read_csv
 
 def gym_space_size(x):
@@ -43,6 +43,15 @@ def remove(path):
         os.remove(path)
     except OSError:
         print('Could not remove path %s' %path)
+def seed(seed):
+    random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    numpy.random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
 class Time:
     def __init__(self):

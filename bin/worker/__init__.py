@@ -5,6 +5,7 @@ class Worker(Process):
     def __init__(self, environment, model, model_kwargs={}, episode_limit=1, rollout_limit=1, rollout_batchsize=-1, discount_rate=1, entropy=1, temporal_difference_scale=0, seed=0, root=None, train=True):
         self.environment = gym.make(environment).env
         self.environment.seed(seed)
+        self.environment.action_space.seed(seed)
 
         # Model
         model_kwargs['observation_space'] = gym_space_size(self.environment.observation_space)
