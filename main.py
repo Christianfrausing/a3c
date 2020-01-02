@@ -4,19 +4,6 @@ from bin.worker import Worker
 from bin.model import TemporalDifferenceAdvantageActorCritic
 from bin.utils import seed
 
-"""
-Chr
-    @ Recreate MountainCar iteration which had success
-    Push code to github
-        - @ Add argparse arguments to main.py script
-        - @ Test code after splitting into multiple scirpts and check that it works
-    Recreate results in colab notebook
-    Look at better explanation in A3C algorithm in paper
-
-Maiken
-    Finish and report wrap up
-"""
-
 parser = argparse.ArgumentParser(description='A3C PyTorch implementation')
 # Worker
 parser.add_argument(
@@ -99,4 +86,10 @@ if __name__ == '__main__':
         status_frequency=args.f,
         save_model=args.save_model
     )
-    controller.plot.average(window=20, save=args.save_plot, show=False)
+    controller.plot.average(
+        window=20,
+        save=args.save_plot,
+        show=False,
+        font_size=25,
+        line_width=3,
+    )

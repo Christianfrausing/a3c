@@ -1,11 +1,13 @@
 from ..utils import Process, Channel, Status, sha1
 import os
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 
 class PlotController:
     def __init__(self, controller):
         self.controller = controller
-    def average(self, window=10, figure_size=(16,4), save=True, show=True):
+    def average(self, window=10, figure_size=(16,4), font_size=10, line_width=1, save=True, show=True):
+        rcParams.update({'font.size': font_size})
         fig = plt.figure(figsize=figure_size)
         axes = fig.subplots(nrows=1, ncols=1)
         dfw = sum([worker.read(ext='csv') for worker in self.controller.workers]) / self.controller.worker_amount
@@ -14,6 +16,7 @@ class PlotController:
             dfw.values[:,1],
             label='Average worker rewards',
             alpha=0.5 if self.controller.validate else 1,
+            linewidth=line_width,
         )
         if self.controller.validate:
             dfv = self.controller.validator.read(ext='csv').rolling(window=window).mean()
@@ -21,6 +24,7 @@ class PlotController:
                 dfv.values[:,0],
                 dfv.values[:,1],
                 label='Running average validator',
+                linewidth=line_width,
             )
         axes.set_xlabel('Time')
         axes.set_ylabel('Rewards')

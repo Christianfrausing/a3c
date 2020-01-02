@@ -1,6 +1,6 @@
 #!/bin/sh
 # hidden = 20
-python3 ./main.py \
+python3 ../main.py \
     --w 4 \
     --v 1 \
     --f 2 \

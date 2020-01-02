@@ -29,22 +29,13 @@ class ActorCritic(Model):
     def __init__(self, observation_space, action_space, optimizer=torch.optim.Adam, optimizer_parameters={'lr' : 1e-3}, gpu=False):
         super(ActorCritic, self).__init__(gpu=gpu)
         hidden1 = 10
-        # hidden2 = 10
         self.process = torch.nn.Sequential(
             torch.nn.Linear(
                 in_features=observation_space,
                 out_features=hidden1,
             ),
             torch.nn.ReLU(inplace=True),
-            ###
-            # torch.nn.Linear(
-            #     in_features=hidden1,
-            #     out_features=hidden2,
-            # ),
-            # torch.nn.ReLU(inplace=True),
-            ###
         )
-        # torch.nn.init.xavier_uniform(self.process[0].weight)
         self.actor = torch.nn.Sequential(
             torch.nn.Linear(
                 in_features=self.process[-2].out_features,
@@ -52,12 +43,10 @@ class ActorCritic(Model):
             ),
             torch.nn.Softmax(dim=1),
         )
-        # torch.nn.init.xavier_uniform(self.actor[0].weight)
         self.critic = torch.nn.Linear(
             in_features=self.process[-2].out_features,
             out_features=1,
         )
-        # torch.nn.init.xavier_uniform(self.critic.weight)
         self.optimizer_name = optimizer.__class__.__name__
         self.optimizer_parameters = optimizer_parameters
         self.set_optimizer(
