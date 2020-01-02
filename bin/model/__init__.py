@@ -72,9 +72,12 @@ class ActorCritic(Model):
         return self.forward(x)[1]
     def policy_loss(self, action_probabilities, delta, entropy):
         # Shannon entropy
-        #   - beta * sum(log(pi) * pi)
+        #   - beta * sum(log(p) * p)
         entropy_loss = - entropy * torch.log(action_probabilities).mul(action_probabilities)
-        return (- torch.log(action_probabilities).mul(delta) + entropy_loss).sum()
+        # Policy loss
+        #   - log(p) * delta
+        policy_loss = - torch.log(action_probabilities).mul(delta)
+        return (policy_loss + entropy_loss).sum()
     def loss(self, states, next_states, actions, rewards, t, entropy, discount_rate, temporal_difference_scale):
         rewards = rewards.to(self.device)
         actual_returns = returns(
