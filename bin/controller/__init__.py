@@ -36,6 +36,8 @@ class PlotController:
             plt.savefig(self.controller.path() + '/average.png')
         if show:
             plt.show()
+        else:
+            plt.close(fig)
 
 class Controller(Process):
     def __init__(self, worker, worker_amount=1, worker_kwargs={}, seed=0, root=None, validate=False):

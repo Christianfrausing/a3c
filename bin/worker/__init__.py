@@ -3,10 +3,9 @@ import gym
 
 class Worker(Process):
     def __init__(self, environment, model, model_kwargs={}, episode_limit=1, rollout_limit=1, rollout_batchsize=-1, discount_rate=1, entropy=1, temporal_difference_scale=0, seed=0, root=None, train=True):
-        self.environment = gym.make(environment)
+        self.environment = gym.make(environment).env
         self.environment.seed(seed)
         self.environment.action_space.seed(seed)
-        self.environment = self.environment.env
 
         # Model
         model_kwargs['observation_space'] = gym_space_size(self.environment.observation_space)
@@ -93,7 +92,7 @@ class Worker(Process):
                 loss, rewards = self.model.loss(
                     *batch,
                     t=states.shape[0],
-                    entropy=self.entropy,
+                    entropy=self.entropy * (self.episode_limit + 2 - episode) / (self.episode_limit + 1),
                     discount_rate=self.discount_rate,
                     temporal_difference_scale=self.temporal_difference_scale,
                 )
