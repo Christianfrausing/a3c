@@ -1,1 +1,0 @@
-{"seed": 1, "episode_limit": 500, "rollout_limit": 500, "discount_rate": 1.0, "entropy": 0.1, "worker": "Worker", "environment": "AcrobotEnv", "observation_space": 6, "action_space": 3, "device": "cpu", "model": "TemporalDifferenceAdvantageActorCritic", "optimizer": "Adam", "optimizer_parameters": {"lr": 0.0015}, "runtime": 34.927622}

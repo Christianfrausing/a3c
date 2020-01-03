@@ -1,1 +1,0 @@
-{"seed": 1, "episode_limit": 1000, "rollout_limit": 50, "discount_rate": 1.0, "entropy": 1e-10, "worker": "Worker", "environment": "CartPoleEnv", "observation_space": 4, "action_space": 2, "device": "cpu", "model": "TemporalDifferenceAdvantageActorCritic", "optimizer": "Adam", "optimizer_parameters": {"lr": 0.001}, "runtime": 16.559932}
