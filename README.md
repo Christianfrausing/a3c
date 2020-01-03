@@ -21,3 +21,5 @@ main.py can be called from terminal where the following args are given:
 | --lr | optimizser learning rate (default: 1e-3) |
 | --save-model | wheter to save the model (default: 0) |
 | --save-plot | wheter to save a plot of the results (default: 0) |
+
+Simple test shell scripts are found in the scripts directory, for simple examples.
