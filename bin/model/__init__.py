@@ -3,14 +3,38 @@ import torch
 
 class Model(torch.nn.Module):
     def __init__(self, gpu=False):
+        """
+        Default torch nn model class.
+
+        Args:
+        -----
+        gpu : bool
+            Wheter to use gpu (CUDA)
+        """
         super(Model, self).__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() and gpu else 'cpu')
     def set_optimizer(self, optimizer=torch.optim.Adam, optimizer_parameters={'lr' : 1e-3}):
+        """
+        Set optimizer.
+
+        Args:
+        -----
+        optimizer : torch.optim class
+        optimizer_parameters : dict
+            Dict of parameters used in the optimzier initialization.
+        """
         self.optimizer = optimizer(
             self.parameters(),
             **optimizer_parameters
         )
     def save(self, path):
+        """
+        Save model.
+
+        Args:
+        -----
+        path : str
+        """
         if not path[-4:].lower() == '.tar':
             path += '.tar'
         torch.save({
@@ -18,6 +42,13 @@ class Model(torch.nn.Module):
             'optimizer_state_dict': self.optimizer.state_dict(),
         }, path)
     def load(self, path):
+        """
+        Load model.
+
+        Args:
+        -----
+        path : str
+        """
         if not path[-4:].lower() == '.tar':
             path += '.tar'
         checkpoint = torch.load(path)
@@ -27,6 +58,21 @@ class Model(torch.nn.Module):
 
 class ActorCritic(Model):
     def __init__(self, observation_space, action_space, optimizer=torch.optim.Adam, optimizer_parameters={'lr' : 1e-3}, gpu=False):
+        """
+        Actor Critic model.
+
+        Args:
+        -----
+        observation_space : int
+            Size of states.
+        action_space : int
+            Number of possible actions.
+        optimizer : torch.optim class
+        optimizer_parameters : dict
+            Dict of parameters used in the optimzier initialization.
+        gpu : bool
+            Wheter to use gpu (CUDA)
+        """
         super(ActorCritic, self).__init__(gpu=gpu)
         hidden1 = 10
         self.process = torch.nn.Sequential(
@@ -36,6 +82,7 @@ class ActorCritic(Model):
             ),
             torch.nn.ReLU(inplace=True),
         )
+        self.process[0].bias.data.fill_(0)
         self.actor = torch.nn.Sequential(
             torch.nn.Linear(
                 in_features=self.process[-2].out_features,
@@ -43,10 +90,12 @@ class ActorCritic(Model):
             ),
             torch.nn.Softmax(dim=1),
         )
+        self.actor[0].bias.data.fill_(0)
         self.critic = torch.nn.Linear(
             in_features=self.process[-2].out_features,
             out_features=1,
         )
+        self.critic.bias.data.fill_(0)
         self.optimizer_name = optimizer.__class__.__name__
         self.optimizer_parameters = optimizer_parameters
         self.set_optimizer(
@@ -94,6 +143,21 @@ class ActorCritic(Model):
 
 class AdvantageActorCritic(ActorCritic):
     def __init__(self, observation_space, action_space, optimizer=torch.optim.Adam, optimizer_parameters={'lr' : 1e-3}, gpu=False):
+        """
+        Advantage Actor Critic model.
+
+        Args:
+        -----
+        observation_space : int
+            Size of states.
+        action_space : int
+            Number of possible actions.
+        optimizer : torch.optim class
+        optimizer_parameters : dict
+            Dict of parameters used in the optimzier initialization.
+        gpu : bool
+            Wheter to use gpu (CUDA)
+        """
         super(AdvantageActorCritic, self).__init__(
             observation_space=observation_space,
             action_space=action_space,
@@ -123,6 +187,21 @@ class AdvantageActorCritic(ActorCritic):
 
 class TemporalDifferenceAdvantageActorCritic(AdvantageActorCritic):
     def __init__(self, observation_space, action_space, optimizer=torch.optim.Adam, optimizer_parameters={'lr' : 1e-3}, gpu=False):
+        """
+        Temporal Difference Advantage Actor Critic model.
+
+        Args:
+        -----
+        observation_space : int
+            Size of states.
+        action_space : int
+            Number of possible actions.
+        optimizer : torch.optim class
+        optimizer_parameters : dict
+            Dict of parameters used in the optimzier initialization.
+        gpu : bool
+            Wheter to use gpu (CUDA)
+        """
         super(TemporalDifferenceAdvantageActorCritic, self).__init__(
             observation_space=observation_space,
             action_space=action_space,

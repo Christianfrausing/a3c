@@ -5,8 +5,34 @@ from matplotlib import rcParams
 
 class PlotController:
     def __init__(self, controller):
+        """
+        Controller plotting class.
+
+        Args:
+        -----
+        controller : Controller
+            Controller instance.
+        """
         self.controller = controller
     def average(self, window=10, figure_size=(16,4), font_size=10, line_width=1, save=True, show=True):
+        """
+        Plot average rewards from workers and a rolling average of the validator rewards.
+
+        Args:
+        -----
+        window : int
+            Window used in rolling average.
+        figure_size : tuple
+            Size of plot figure.
+        font_size : int
+            Size of font used in figure.
+        line_width : int
+            Width of lines in figure.
+        save : bool
+            Wheter to save an image of the plot.
+        show : bool
+            Wheter to show the plot.
+        """
         rcParams.update({'font.size': font_size})
         fig = plt.figure(figsize=figure_size)
         axes = fig.subplots(nrows=1, ncols=1)
@@ -41,6 +67,22 @@ class PlotController:
 
 class Controller(Process):
     def __init__(self, worker, worker_amount=1, worker_kwargs={}, seed=0, root=None, validate=False):
+        """
+        Controller class used for orchistrating the distributed training of the shared model.
+
+        Args:
+        -----
+        worker : Worker class
+        worker_amount : int
+            Amount of workers used in training.
+        worker_kwargs : dict
+            Kwargs passed in worker initialization.
+        seed : int
+        root : str or None
+            Path used for logging.
+        validate : bool
+            Wheter to use a validation worker
+        """
         # Checks
         assert worker_amount > 0
 
@@ -60,9 +102,11 @@ class Controller(Process):
             train=False,
             **worker_kwargs,
         )
-        worker_kwargs['model'] = self.validator.model
+        # worker_kwargs['model'] = self.validator.model
+        self.validator.model.share_memory()
         self.workers = [
             worker(
+                shared_model=self.validator.model,
                 seed=seed,
                 root=self.path,
                 **worker_kwargs,
@@ -77,8 +121,18 @@ class Controller(Process):
         )
         self.plot = PlotController(controller=self)
     def name(self):
+        """
+        Out:
+        ----
+        name : str
+        """
         return self.__class__.__name__ + str(self.__hash__())
     def specs(self):
+        """
+        Out:
+        ----
+        specs : dict
+        """
         return {
             'seed':self.workers[0].seed,
             'episode_limit':self.workers[0].episode_limit,
@@ -121,11 +175,21 @@ class Controller(Process):
         self.worker_channels = [worker.channel.reset() for worker in self.workers]
         
         # Apply processes
-        self.validator.model.share_memory()
         if self.validate:
             self.validator.start()
         [worker.start() for worker in self.workers]
     def __call__(self, status_frequency=None, save_model=True):
+        """
+        Start clntroller.
+
+        Args:
+        -----
+        status_frequency : int or None
+            If None, no status prints are made, otherwise prints are made every
+            second described by the variable.
+        save_model : bool
+            Wheter to save the model when training has finished.
+        """
         self.__init_logs__()
         self.__init_processes__()
 

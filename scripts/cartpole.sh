@@ -3,12 +3,12 @@
 python3 ../main.py \
     --w 4 \
     --v 1 \
-    --f 2 \
+    --f 1 \
     --gpu 0 \
     --out logs/cartpole \
     --seed 0 \
     --env CartPole-v1 \
-    --el 1000 \
+    --el 2000 \
     --rl 50 \
     --rb -1 \
     --ent 1e-10 \
